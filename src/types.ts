@@ -1,0 +1,44 @@
+export interface JobCardProps {
+  id: string;
+  name: string;
+  salary_range: SalaryRange;
+  experience: Experience;
+  employment_form?: EmploymentForm;
+  employer: Employer;
+  address: Address;
+}
+
+export interface fetchData {
+  items: JobCardProps[];
+}
+
+export interface Address {
+  city: string;
+}
+
+export interface SalaryRange {
+  currency: string;
+  from: number;
+  gross: boolean;
+  to: number;
+}
+
+export interface Experience {
+  id: string;
+  name: string;
+}
+
+export interface EmploymentForm {
+  id: string;
+  name: string;
+}
+
+export interface Employer {
+  accredited_it_employer: boolean;
+  alternate_url: string;
+  id: string;
+  name: string;
+  trusted: boolean;
+  url: string;
+  vacancies_url: string;
+}
