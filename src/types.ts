@@ -1,3 +1,10 @@
+export interface fetchData {
+  items: JobCardProps[];
+  found: number;
+  pages: number;
+  per_page: number;
+  page: number;
+}
 export interface JobCardProps {
   id: string;
   name: string;
@@ -5,12 +12,16 @@ export interface JobCardProps {
   experience: Experience;
   employment_form?: EmploymentForm;
   employer: Employer;
+  work_format?: WorkFormatList;
   address: Address;
+  alternate_url: string;
 }
 
-export interface fetchData {
-  items: JobCardProps[];
+export interface WorkFormat {
+  id: string;
+  name: string;
 }
+export type WorkFormatList = WorkFormat[];
 
 export interface Address {
   city: string;

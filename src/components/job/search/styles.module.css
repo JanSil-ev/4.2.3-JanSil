@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  gap: 10px;
+  background-color: #ffffff;
+
+  width: 100%;
+  max-width: 600px;
+
+  transition: box-shadow 0.2s ease;
+}
+
+.container:focus-within {
+  box-shadow: 0 0 0 2px rgba(66, 99, 235, 0.15);
+}
+
+.input {
+  flex: 1;
+}
+
+.button {
+  background-color: #4263EB !important;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background-color: #364FC7 !important;
+}

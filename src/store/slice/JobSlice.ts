@@ -1,37 +1,44 @@
-import { fetchData } from '@/types';
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import ky from 'ky';
+import { fetchData } from '@/types';
 
-
-interface initialStateType {
+interface JobState {
   data: fetchData | null;
   isLoading: boolean;
   error: string | null;
 }
 
-const initialState: initialStateType = {
+const initialState: JobState = {
   data: null,
   isLoading: false,
   error: null,
 };
 
-export const fetchJob = createAsyncThunk(
-  'product/fetchJob', 
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await ky.get('https://api.hh.ru/vacancies?industry=7&professional_role=96&per_page=10');
-      const json = await response.json() as fetchData;
-      console.log(json);
-      console.log(3)
-      return json;
-    } catch (error) {
-      return rejectWithValue('Failed to fetch job');
-    }
-  }
-);
+export const fetchJob = createAsyncThunk<
+  fetchData,
+  { query?: string; city?: string; page?: number },
+  { rejectValue: string }
+>('job/fetchJob', async ({ query = '', city = 'all', page = 1 }, { rejectWithValue }) => {
+  try {
+    const params = new URLSearchParams({
+      industry: '7',
+      professional_role: '96',
+      per_page: '10',
+      page: (page - 1).toString(),
+    });
 
-const JobSlice = createSlice({
-  name: 'products',
+    if (query) params.append('text', query);
+    if (city !== 'all') params.append('area', city);
+
+    const response = await ky.get(`https://api.hh.ru/vacancies?${params.toString()}`);
+    return (await response.json()) as fetchData;
+  } catch {
+    return rejectWithValue('Не удалось загрузить вакансии');
+  }
+});
+
+const jobSlice = createSlice({
+  name: 'job',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -40,19 +47,15 @@ const JobSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(
-        fetchJob.fulfilled,
-        (state, action: PayloadAction<fetchData>) => {
-          state.isLoading = false;
-          state.data = action.payload;
-          state.error = null;
-        }
-      )
-      .addCase(fetchJob.rejected, (state, action) => {
+      .addCase(fetchJob.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.data = payload;
+      })
+      .addCase(fetchJob.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.error = payload || 'Ошибка загрузки данных';
       });
   },
 });
 
-export default JobSlice.reducer;
+export default jobSlice.reducer;

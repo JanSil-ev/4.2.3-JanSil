@@ -1,50 +1,68 @@
 import { Badge, Button, Card, Group, Stack, Text } from '@mantine/core';
 import { JobCardProps } from '@/types';
+import styles from './styles.module.css';
 
 export default function JobCard({
   id,
   name,
   salary_range,
   experience,
-  employment_form,
   employer,
+  work_format,
   address,
+  alternate_url,
 }: JobCardProps) {
+  const formatColorClass = (formatName: string) => {
+    const lower = formatName.toLowerCase();
+    if (lower === 'офис') return styles.badgeOffice;
+    if (lower === 'удалённо') return styles.badgeRemote;
+    if (lower === 'гибрид') return styles.badgeHybrid;
+    return styles.badgeDefault;
+  };
+
   return (
-    <Card shadow="xs" padding="md" radius="md" withBorder>
-      <Stack gap={8}>
-        {/* Заголовок */}
-        <Text
-          fw={600}
-          size="lg"
-          c="#1c7ed6"
-          style={{ cursor: 'pointer', textDecoration: 'underline' }}
-        >
-          {name}
-        </Text>
+    <Card className={styles.card} withBorder radius="md" id={id}>
+      <Stack gap={6}>
+        <Text className={styles.title}>{name}</Text>
 
-        {/* Зарплата и опыт */}
-        <Group gap="xs">
-          <Text fw={500} size="sm">
-            {`${salary_range?.from} - ${salary_range?.to}`}
+        <Group gap={8} align="center" className={styles.salaryGroup}>
+          <Text className={styles.salary}>
+            {salary_range?.from && salary_range?.to
+              ? `${salary_range.from} – ${salary_range.to} ₽`
+              : salary_range?.from
+                ? `от ${salary_range.from} ₽`
+                : salary_range?.to
+                  ? `до ${salary_range.to} ₽`
+                  : 'Зарплата не указана'}
           </Text>
-          <Text size="sm" c="dimmed">
-            {experience?.name}
-          </Text>
+          <Text className={styles.experience}>{experience?.name || 'Без опыта'}</Text>
         </Group>
 
-        <Group gap="xs">
-          <Badge color="gray" variant="light" size="sm">
-            {employment_form?.name}
-          </Badge>
-          <Text size="sm">{address?.city}</Text>
-        </Group>
+        {employer.name && <Text className={styles.employer}>{employer.name}</Text>}
 
-        <Group mt="xs" gap="sm">
-          <Button color="dark" radius="sm">
+        {Array.isArray(work_format) && work_format.length > 0 && (
+          <Group gap={8} className={styles.badgeGroup}>
+            {work_format.map((format) => (
+              <Badge
+                key={format.id}
+                variant="light"
+                radius="sm"
+                size="sm"
+                className={`${styles.badge} ${formatColorClass(format.name)}`}
+              >
+                {format.name.toUpperCase()}
+              </Badge>
+            ))}
+          </Group>
+        )}
+
+        {address?.city && <Text className={styles.location}>{address.city}</Text>}
+
+        <Group gap={8} mt={8} className={styles.buttonGroup}>
+          <Button component="a" href={alternate_url} target="_blank" className={styles.viewButton}>
             Смотреть вакансию
           </Button>
-          <Button color="gray" variant="filled" radius="sm">
+          <Button variant="default" className={styles.replyButton}>
             Откликнуться
           </Button>
         </Group>

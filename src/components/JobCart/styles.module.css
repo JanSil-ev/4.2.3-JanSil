@@ -1,0 +1,110 @@
+.card {
+  padding: 20px 24px;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  color: #2b66f6;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.salaryGroup {
+  margin-top: 6px;
+}
+
+.salary {
+  font-weight: 500;
+  font-size: 14px;
+  color: #000;
+}
+
+.experience {
+  font-size: 14px;
+  color: #9b9b9b;
+}
+
+.employer {
+  font-size: 14px;
+  color: #0F0F1080;
+  margin-top: 4px;
+}
+
+.badgeGroup {
+  margin-top: 4px;
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badgeRemote {
+  background-color: #1a56db !important;
+  color: white !important;
+  border: none !important;
+}
+
+.badgeOffice {
+  background-color: #e5e7eb !important;
+  color: #333 !important;
+}
+
+.badgeHybrid {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+}
+
+.badgeDefault {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+}
+
+.location {
+  font-size: 14px;
+  color: #000;
+  margin-top: 4px;
+}
+
+.buttonGroup {
+  margin-top: 8px;
+}
+
+.viewButton {
+  background-color: #000;
+  color: #fff;
+  font-weight: 500;
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+}
+
+.viewButton:hover {
+  background-color: #333;
+}
+
+.replyButton {
+  color: #000 !important;
+  border: 1px solid #e6e6e6 !important;
+  background-color: #fff !important;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 8px 14px;
+}
+
+.replyButton:hover {
+  background-color: #f5f5f5 !important;
+}

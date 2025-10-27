@@ -8,9 +8,8 @@
     margin-bottom: 32px;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    gap: 20px;
 }
 
 .content {
@@ -30,4 +29,3 @@
     flex-direction: column;
     gap: 16px;
 }
-
