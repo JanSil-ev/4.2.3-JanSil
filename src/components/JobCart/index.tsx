@@ -62,7 +62,7 @@ export default function JobCard({
           <Button component="a" href={alternate_url} target="_blank" className={styles.viewButton}>
             Смотреть вакансию
           </Button>
-          <Button variant="default" className={styles.replyButton}>
+          <Button component="a" href={alternate_url} target="_blank" variant="default" className={styles.replyButton}>
             Откликнуться
           </Button>
         </Group>
