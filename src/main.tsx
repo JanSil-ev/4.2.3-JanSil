@@ -8,7 +8,7 @@ import { store } from './store/index';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
+      <BrowserRouter basename="/4.2.3-JanSil/">
         <App />
       </BrowserRouter>
     </Provider>
