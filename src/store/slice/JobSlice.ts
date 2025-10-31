@@ -6,12 +6,14 @@ interface JobState {
   data: fetchData | null;
   isLoading: boolean;
   error: string | null;
+  selectedVacancy: any | null;
 }
 
 const initialState: JobState = {
   data: null,
   isLoading: false,
   error: null,
+  selectedVacancy: null,
 };
 
 export const fetchJob = createAsyncThunk<
@@ -28,14 +30,45 @@ export const fetchJob = createAsyncThunk<
     });
 
     if (query) params.append('text', query);
-    if (city !== 'all') params.append('area', city);
 
-    const response = await ky.get(`https://api.hh.ru/vacancies?${params.toString()}`);
-    return (await response.json()) as fetchData;
-  } catch {
+    if (city && city !== 'all') {
+      const cityMap: Record<string, string> = {
+        москва: '1',
+        moscow: '1',
+        'санкт-петербург': '2',
+        spb: '2',
+        'sankt-peterburg': '2',
+      };
+
+      const normalized = city.toLowerCase().trim();
+      const area = cityMap[normalized] || city;
+      params.append('area', area);
+    }
+
+    const url = `https://api.hh.ru/vacancies?${params.toString()}`;
+    const response = await ky.get(url, {
+      headers: { Accept: 'application/json' },
+    });
+    const data = (await response.json()) as fetchData;
+    return data;
+  } catch (err: any) {
+    console.error('fetchJob error:', err);
     return rejectWithValue('Не удалось загрузить вакансии');
   }
 });
+
+export const fetchJobById = createAsyncThunk<any, string, { rejectValue: string }>(
+  'job/fetchJobById',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await ky.get(`https://api.hh.ru/vacancies/${id}`);
+      return await response.json();
+    } catch (err: any) {
+      console.error('fetchJobById error:', err);
+      return rejectWithValue('Не удалось загрузить вакансию');
+    }
+  }
+);
 
 const jobSlice = createSlice({
   name: 'job',
@@ -54,6 +87,30 @@ const jobSlice = createSlice({
       .addCase(fetchJob.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.error = payload || 'Ошибка загрузки данных';
+      })
+      .addCase(fetchJobById.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchJobById.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.selectedVacancy = payload;
+
+        if (state.data?.items) {
+          const idx = state.data.items.findIndex(
+            (item: any) => String(item.id) === String(payload.id)
+          );
+          if (idx !== -1) {
+            state.data.items[idx] = {
+              ...state.data.items[idx],
+              ...payload,
+            };
+          }
+        }
+      })
+      .addCase(fetchJobById.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.error = payload || 'Ошибка загрузки вакансии';
       });
   },
 });

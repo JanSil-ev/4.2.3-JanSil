@@ -1,8 +1,8 @@
 import ListJod from './listJob';
 import Search from './search';
+import Skills from './skills';
 import Title from './title';
 import styles from './styles.module.css';
-import Skills from './skills';
 
 export default function JodPage() {
   return (
@@ -13,7 +13,7 @@ export default function JodPage() {
       </div>
       <div className={styles.content}>
         <div className={styles.leftColumn}>
-          <Skills/>
+          <Skills />
         </div>
         <div className={styles.rightColumn}>
           <ListJod />

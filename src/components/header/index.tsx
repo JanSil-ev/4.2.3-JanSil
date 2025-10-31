@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Avatar } from '@mantine/core';
 import hh from '../image/hh.png';
 import styles from './styles.module.css';
@@ -11,9 +12,10 @@ export const Header = () => {
       </div>
 
       <nav className={styles.nav}>
-        <button className={`${styles.link} ${styles.active}`}>
+        <Link to="/" className={`${styles.link} ${styles.active}`}>
           Вакансии FE <span className={styles.dot}></span>
-        </button>
+        </Link>
+
         <button className={styles.link}>
           <Avatar radius="xl" />
           <p>Обо мне</p>

@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from '@test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { updateCityAndFetch } from '@/store/slice/filtersSlice';
 import { addSkill, removeSkill, updateSkillsAndFetch } from '@/store/slice/skillsSlice';
+import { MemoryRouter } from 'react-router-dom';
 
 const mockDispatch = vi.fn();
 let mockState: any = {};
@@ -22,6 +23,10 @@ vi.mock('@/store/slice/filtersSlice', () => ({
   updateCityAndFetch: vi.fn(),
 }));
 
+function renderWithRouter(ui: React.ReactElement) {
+  return render(<MemoryRouter>{ui}</MemoryRouter>);
+}
+
 describe('Skills component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -32,31 +37,31 @@ describe('Skills component', () => {
   });
 
   it('рендерит навыки и селект города', () => {
-    render(<Skills />);
+    renderWithRouter(<Skills />);
     expect(screen.getByText('React')).toBeInTheDocument();
     expect(screen.getByText('TypeScript')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/все города/i)).toBeInTheDocument();
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
   it('добавляет новый навык по клику на кнопку', () => {
-    render(<Skills />);
+    renderWithRouter(<Skills />);
     const input = screen.getByPlaceholderText(/навык/i);
     fireEvent.change(input, { target: { value: 'Redux' } });
-    fireEvent.click(screen.getByRole('button'));
+    fireEvent.click(screen.getByTestId('add'));
 
     expect(addSkill).toHaveBeenCalledWith('Redux');
     expect(updateSkillsAndFetch).toHaveBeenCalledWith(['React', 'TypeScript', 'Redux']);
   });
 
   it('удаляет навык при клике на кнопку удаления', () => {
-    render(<Skills />);
-    fireEvent.click(screen.getByTestId('React'));
-
-    !expect(screen.getByText('React'));
+    renderWithRouter(<Skills />);
+    const pill = screen.getByTestId('React');
+    fireEvent.click(pill.querySelector('button')!); // клик по remove button
+    expect(removeSkill).toHaveBeenCalledWith('React');
   });
 
   it('изменяет город при выборе из Select', async () => {
-    render(<Skills />);
+    renderWithRouter(<Skills />);
 
     const selectControl = screen.getByRole('combobox');
     fireEvent.mouseDown(selectControl);

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IconMapPin, IconPlus } from '@tabler/icons-react';
+import { useSearchParams } from 'react-router-dom';
 import { ActionIcon, Pill, PillGroup, Select, Stack, Text, TextInput } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { updateCityAndFetch } from '@/store/slice/filtersSlice';
-import { addSkill, removeSkill, updateSkillsAndFetch } from '@/store/slice/skillsSlice';
+import { setCity, updateCityAndFetch } from '@/store/slice/filtersSlice';
+import { addSkill, removeSkill, setSkills, updateSkillsAndFetch } from '@/store/slice/skillsSlice';
 import classes from './styles.module.css';
 
 export default function Skills() {
@@ -11,11 +12,16 @@ export default function Skills() {
   const skills = useAppSelector((state) => state.skills.skills);
   const city = useAppSelector((state) => state.filters.city);
   const [inputValue, setInputValue] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const handleAddSkill = () => {
+    const newSearchParams = new URLSearchParams(searchParams);
+
     const trimmed = inputValue.trim();
     if (!trimmed || skills.includes(trimmed)) return;
     const updated = [...skills, trimmed];
+    newSearchParams.set('skills', updated.toString());
+    setSearchParams(newSearchParams);
     dispatch(addSkill(trimmed));
     dispatch(updateSkillsAndFetch(updated));
     setInputValue('');
@@ -23,13 +29,40 @@ export default function Skills() {
 
   const handleRemoveSkill = (skill: string) => {
     const updated = skills.filter((s) => s !== skill);
+    const newSearchParams = new URLSearchParams(searchParams);
+    console.log(skills);
+    if (skills.length === 1) {
+      newSearchParams.delete('skills');
+    } else {
+      newSearchParams.set('skills', updated.toString());
+    }
+    setSearchParams(newSearchParams);
     dispatch(removeSkill(skill));
     dispatch(updateSkillsAndFetch(updated));
   };
 
+  useEffect(() => {
+    const queryParam = searchParams.get('skills');
+    if (queryParam) {
+      dispatch(setSkills(queryParam.split(',')));
+      dispatch(updateSkillsAndFetch(queryParam.split(',')));
+    }
+  }, []);
+
   const handleCityChange = (value: string | null) => {
-    if (value) dispatch(updateCityAndFetch(value));
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('city', value as string);
+    dispatch(updateCityAndFetch(value as string));
+    setSearchParams(newSearchParams);
   };
+
+  useEffect(() => {
+    const queryParam = searchParams.get('city');
+    if (queryParam) {
+      dispatch(updateCityAndFetch(queryParam));
+      dispatch(setCity(queryParam));
+    }
+  }, []);
 
   return (
     <div>
@@ -43,7 +76,7 @@ export default function Skills() {
             onKeyDown={(e) => e.key === 'Enter' && handleAddSkill()}
             classNames={{ input: classes.textInput }}
           />
-          <ActionIcon data-testid='add'className={classes.addButton} onClick={handleAddSkill}>
+          <ActionIcon data-testid="add" className={classes.addButton} onClick={handleAddSkill}>
             <IconPlus size={18} />
           </ActionIcon>
         </div>
@@ -51,7 +84,7 @@ export default function Skills() {
         <PillGroup className={classes.pillGroup}>
           {skills.map((skill) => (
             <Pill
-            data-testid={skill}
+              data-testid={skill}
               className={classes.skills}
               key={skill}
               withRemoveButton
@@ -65,7 +98,8 @@ export default function Skills() {
 
       <div className={classes.container}>
         <Select
-        role='combobox'
+          allowDeselect={false}
+          role="combobox"
           placeholder="Все города"
           value={city}
           onChange={handleCityChange}

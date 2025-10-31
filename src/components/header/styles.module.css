@@ -34,11 +34,9 @@
   position: relative;
   display: flex;
   align-items: center;
+  text-decoration: none
 }
 
-.link:hover {
-  color: #e31e24;
-}
 
 .active {
   color: #000000;

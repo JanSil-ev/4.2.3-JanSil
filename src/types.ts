@@ -5,6 +5,7 @@ export interface fetchData {
   per_page: number;
   page: number;
 }
+
 export interface JobCardProps {
   id: string;
   name: string;
@@ -15,12 +16,14 @@ export interface JobCardProps {
   work_format?: WorkFormatList;
   address: Address;
   alternate_url: string;
+  description?: string;
 }
 
 export interface WorkFormat {
-  id: string;
-  name: string;
+  id: 'REMOTE' | 'HYBRID' | 'ON_SITE' | string;
+  name: 'Удалённо' | 'Гибрид' | 'Офис' | string;
 }
+
 export type WorkFormatList = WorkFormat[];
 
 export interface Address {
@@ -30,8 +33,8 @@ export interface Address {
 export interface SalaryRange {
   currency: string;
   from: number;
-  gross: boolean;
   to: number;
+  gross: boolean;
 }
 
 export interface Experience {
@@ -45,11 +48,11 @@ export interface EmploymentForm {
 }
 
 export interface Employer {
-  accredited_it_employer: boolean;
-  alternate_url: string;
   id: string;
   name: string;
-  trusted: boolean;
   url: string;
+  alternate_url: string;
   vacancies_url: string;
+  trusted: boolean;
+  accredited_it_employer: boolean;
 }

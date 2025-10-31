@@ -1,0 +1,35 @@
+.wrapper {
+  width: 100%;
+  max-width: 800px;
+  background-color: var(--mantine-color-body);
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+  color: #000;
+}
+
+.description {
+  margin-top: 0.5rem;
+  line-height: 1.65;
+  font-size: 15px;
+  color: #222;
+}
+
+.description p {
+  margin-bottom: 0.75rem;
+}
+
+.description strong {
+  font-weight: 600;
+}
+
+.description h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 1.2rem;
+  margin-bottom: 0.4rem;
+}

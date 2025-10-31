@@ -9,9 +9,6 @@
   transition: box-shadow 0.2s ease;
 }
 
-.container:focus-within {
-  box-shadow: 0 0 0 2px rgba(66, 99, 235, 0.15);
-}
 
 .input {
   flex: 1;

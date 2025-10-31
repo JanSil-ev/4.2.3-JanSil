@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { IconSearch } from '@tabler/icons-react';
+import { useSearchParams } from 'react-router-dom';
 import { Button, Loader, TextInput } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchJob } from '@/store/slice/JobSlice';
@@ -10,6 +11,7 @@ export default function Search() {
   const { isLoading } = useAppSelector((state) => state.job);
   const { city } = useAppSelector((state) => state.filters);
   const [query, setQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     dispatch(fetchJob({ query: '', city: 'all' }));
@@ -17,7 +19,25 @@ export default function Search() {
 
   const handleSearch = () => {
     dispatch(fetchJob({ query: query.trim(), city }));
+
+    const newSearchParams = new URLSearchParams(searchParams);
+
+    if (query.trim()) {
+      newSearchParams.set('query', query.trim());
+    } else {
+      newSearchParams.delete('query');
+    }
+
+    setSearchParams(newSearchParams);
   };
+
+  useEffect(() => {
+    const queryParam = searchParams.get('query');
+    if (queryParam) {
+      setQuery(queryParam);
+      dispatch(fetchJob({ query: queryParam }));
+    }
+  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') handleSearch();
