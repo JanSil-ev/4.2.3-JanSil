@@ -22,17 +22,13 @@ export default function ListJob() {
     if (urlCity !== city) dispatch(setCity(urlCity));
     if (urlPage !== page) setPage(urlPage);
   }, []);
+
   useEffect(() => {
-    const params: Record<string, string> = {};
-
-    if (city && city !== 'all') params.city = city;
-    if (text) params.text = text;
-    if (page > 1) params.page = String(page);
-
+    const params = new URLSearchParams(searchParams);
+    if (page > 1) params.set('page', String(page));
     setSearchParams(params);
-
     dispatch(fetchJob({ query: text, city, page }));
-  }, [city, text, page, dispatch]);
+  }, [page, dispatch]);
 
   if (isLoading)
     return (
