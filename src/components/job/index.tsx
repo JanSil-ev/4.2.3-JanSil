@@ -1,5 +1,5 @@
 import ListJod from './listJob';
-import Search from './search';
+import Search from './Search';
 import Skills from './skills';
 import Title from './title';
 import styles from './styles.module.css';

@@ -18,44 +18,47 @@ const initialState: JobState = {
 
 export const fetchJob = createAsyncThunk<
   fetchData,
-  { query?: string; city?: string; page?: number },
+  { query?: string; city?: string; page?: number; skills?: string[] },
   { rejectValue: string }
->('job/fetchJob', async ({ query = '', city = 'all', page = 1 }, { rejectWithValue }) => {
-  try {
-    const params = new URLSearchParams({
-      industry: '7',
-      professional_role: '96',
-      per_page: '10',
-      page: (page - 1).toString(),
-    });
+>(
+  'job/fetchJob',
+  async ({ query = '', city = 'all', page = 1, skills = [] }, { rejectWithValue }) => {
+    try {
+      const params = new URLSearchParams({
+        industry: '7',
+        professional_role: '96',
+        per_page: '10',
+        page: (page - 1).toString(),
+      });
 
-    if (query) params.append('text', query);
+      if (query) params.append('text', query);
 
-    if (city && city !== 'all') {
-      const cityMap: Record<string, string> = {
-        москва: '1',
-        moscow: '1',
-        'санкт-петербург': '2',
-        spb: '2',
-        'sankt-peterburg': '2',
-      };
+      if (skills.length > 0) {
+        params.append('skill_set ', skills.toString());
+      }
 
-      const normalized = city.toLowerCase().trim();
-      const area = cityMap[normalized] || city;
-      params.append('area', area);
+      if (city && city !== 'all') {
+        const cityMap: Record<string, string> = {
+          москва: '1',
+          moscow: '1',
+          'санкт-петербург': '2',
+          spb: '2',
+        };
+
+        const normalized = city.toLowerCase().trim();
+        const area = cityMap[normalized] || city;
+        params.append('area', area);
+      }
+
+      const url = `https://api.hh.ru/vacancies?${params.toString()}`;
+      const response = await ky.get(url, { headers: { Accept: 'application/json' } });
+
+      return (await response.json()) as fetchData;
+    } catch {
+      return rejectWithValue('Не удалось загрузить вакансии');
     }
-
-    const url = `https://api.hh.ru/vacancies?${params.toString()}`;
-    const response = await ky.get(url, {
-      headers: { Accept: 'application/json' },
-    });
-    const data = (await response.json()) as fetchData;
-    return data;
-  } catch (err: any) {
-    console.error('fetchJob error:', err);
-    return rejectWithValue('Не удалось загрузить вакансии');
   }
-});
+);
 
 export const fetchJobById = createAsyncThunk<any, string, { rejectValue: string }>(
   'job/fetchJobById',

@@ -3,8 +3,8 @@ import { IconMapPin, IconPlus } from '@tabler/icons-react';
 import { useSearchParams } from 'react-router-dom';
 import { ActionIcon, Pill, PillGroup, Select, Stack, Text, TextInput } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setCity, updateCityAndFetch } from '@/store/slice/filtersSlice';
-import { addSkill, removeSkill, setSkills, updateSkillsAndFetch } from '@/store/slice/skillsSlice';
+import { setCity } from '@/store/slice/filtersSlice';
+import { addSkill, removeSkill, setSkills } from '@/store/slice/skillsSlice';
 import classes from './styles.module.css';
 
 export default function Skills() {
@@ -23,7 +23,6 @@ export default function Skills() {
     newSearchParams.set('skills', updated.toString());
     setSearchParams(newSearchParams);
     dispatch(addSkill(trimmed));
-    dispatch(updateSkillsAndFetch(updated));
     setInputValue('');
   };
 
@@ -38,28 +37,25 @@ export default function Skills() {
     }
     setSearchParams(newSearchParams);
     dispatch(removeSkill(skill));
-    dispatch(updateSkillsAndFetch(updated));
   };
 
   useEffect(() => {
     const queryParam = searchParams.get('skills');
     if (queryParam) {
       dispatch(setSkills(queryParam.split(',')));
-      dispatch(updateSkillsAndFetch(queryParam.split(',')));
     }
   }, []);
 
   const handleCityChange = (value: string | null) => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set('city', value as string);
-    dispatch(updateCityAndFetch(value as string));
+    dispatch(setCity(value as string));
     setSearchParams(newSearchParams);
   };
 
   useEffect(() => {
     const queryParam = searchParams.get('city');
     if (queryParam) {
-      dispatch(updateCityAndFetch(queryParam));
       dispatch(setCity(queryParam));
     }
   }, []);

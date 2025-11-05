@@ -1,6 +1,4 @@
-import { AppDispatch } from '..';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchJob } from './JobSlice';
 
 interface FiltersState {
   city: string;
@@ -21,14 +19,5 @@ const filtersSlice = createSlice({
 });
 
 export const { setCity } = filtersSlice.actions;
-
-export const updateCityAndFetch =
-  (city: string) => (dispatch: AppDispatch, getState: () => any) => {
-    dispatch(setCity(city));
-
-    const { skills } = getState().skills;
-    const query = skills?.join(' ') || '';
-    dispatch(fetchJob({ query, city }));
-  };
 
 export default filtersSlice.reducer;

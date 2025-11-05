@@ -3,22 +3,17 @@ import { IconSearch } from '@tabler/icons-react';
 import { useSearchParams } from 'react-router-dom';
 import { Button, Loader, TextInput } from '@mantine/core';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchJob } from '@/store/slice/JobSlice';
+import { setQuery } from '@/store/slice/searchSlice';
 import classes from './styles.module.css';
 
 export default function Search() {
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((state) => state.job);
-  const { city } = useAppSelector((state) => state.filters);
-  const [query, setQuery] = useState('');
+  const [query, setQueryInput] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
 
-  useEffect(() => {
-    dispatch(fetchJob({ query: '', city: 'all' }));
-  }, [dispatch]);
-
   const handleSearch = () => {
-    dispatch(fetchJob({ query: query.trim(), city }));
+    dispatch(setQuery(query.trim()));
 
     const newSearchParams = new URLSearchParams(searchParams);
 
@@ -34,8 +29,8 @@ export default function Search() {
   useEffect(() => {
     const queryParam = searchParams.get('query');
     if (queryParam) {
-      setQuery(queryParam);
-      dispatch(fetchJob({ query: queryParam }));
+      setQueryInput(queryParam);
+      dispatch(setQuery(queryParam));
     }
   }, []);
 
@@ -52,7 +47,7 @@ export default function Search() {
         size="md"
         className={classes.input}
         value={query}
-        onChange={(e) => setQuery(e.currentTarget.value)}
+        onChange={(e) => setQueryInput(e.currentTarget.value)}
         onKeyDown={handleKeyDown}
         rightSection={isLoading ? <Loader size="xs" /> : null}
       />

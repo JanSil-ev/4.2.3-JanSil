@@ -1,9 +1,8 @@
 import Skills from '.';
 import { fireEvent, render, screen } from '@test-utils';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { updateCityAndFetch } from '@/store/slice/filtersSlice';
-import { addSkill, removeSkill, updateSkillsAndFetch } from '@/store/slice/skillsSlice';
 import { MemoryRouter } from 'react-router-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { addSkill, removeSkill } from '@/store/slice/skillsSlice';
 
 const mockDispatch = vi.fn();
 let mockState: any = {};
@@ -16,11 +15,6 @@ vi.mock('@/store/hooks', () => ({
 vi.mock('@/store/slice/skillsSlice', () => ({
   addSkill: vi.fn(),
   removeSkill: vi.fn(),
-  updateSkillsAndFetch: vi.fn(),
-}));
-
-vi.mock('@/store/slice/filtersSlice', () => ({
-  updateCityAndFetch: vi.fn(),
 }));
 
 function renderWithRouter(ui: React.ReactElement) {
@@ -50,13 +44,12 @@ describe('Skills component', () => {
     fireEvent.click(screen.getByTestId('add'));
 
     expect(addSkill).toHaveBeenCalledWith('Redux');
-    expect(updateSkillsAndFetch).toHaveBeenCalledWith(['React', 'TypeScript', 'Redux']);
   });
 
   it('удаляет навык при клике на кнопку удаления', () => {
     renderWithRouter(<Skills />);
     const pill = screen.getByTestId('React');
-    fireEvent.click(pill.querySelector('button')!); // клик по remove button
+    fireEvent.click(pill.querySelector('button')!);
     expect(removeSkill).toHaveBeenCalledWith('React');
   });
 
@@ -68,7 +61,5 @@ describe('Skills component', () => {
 
     const option = await screen.findByText('Москва');
     fireEvent.click(option);
-
-    expect(updateCityAndFetch).toHaveBeenCalledWith('1');
   });
 });

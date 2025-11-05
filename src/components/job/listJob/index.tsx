@@ -3,32 +3,31 @@ import { useSearchParams } from 'react-router-dom';
 import { Center, Loader, Pagination, Stack, Text } from '@mantine/core';
 import JobCard from '@/components/JobCart';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setCity } from '@/store/slice/filtersSlice';
 import { fetchJob } from '@/store/slice/JobSlice';
 
 export default function ListJob() {
   const dispatch = useAppDispatch();
+
   const { data, isLoading, error } = useAppSelector((state) => state.job);
   const { city } = useAppSelector((state) => state.filters);
+  const { query } = useAppSelector((state) => state.search);
+  const { skills } = useAppSelector((state) => state.skills);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
-  const text = searchParams.get('text') || '';
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    const urlCity = searchParams.get('city') || 'all';
-    const urlPage = Number(searchParams.get('page')) || 1;
-
-    if (urlCity !== city) dispatch(setCity(urlCity));
-    if (urlPage !== page) setPage(urlPage);
-  }, []);
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    if (page > 1) params.set('page', String(page));
-    setSearchParams(params);
-    dispatch(fetchJob({ query: text, city, page }));
-  }, [page, dispatch]);
+    dispatch(
+      fetchJob({
+        query: (searchParams.get('query') as string)
+          ? (searchParams.get('query') as string)
+          : query,
+        city: (searchParams.get('city') as string) ? (searchParams.get('city') as string) : city,
+        page: page,
+        skills: searchParams.get('skills') ? searchParams.get('skills')?.split(',') : skills,
+      })
+    );
+  }, [city, query, skills, page]);
 
   if (isLoading)
     return (
@@ -51,11 +50,11 @@ export default function ListJob() {
       </Center>
     );
 
-  const totalPages = data.pages ?? Math.ceil((data.found || 0) / 10);
+  const totalPages = data?.pages ?? Math.ceil((data.found || 0) / 10);
 
   return (
     <Stack gap="md">
-      {data.items.map((job) => (
+      {data?.items?.map((job) => (
         <JobCard key={job.id} {...job} />
       ))}
 
